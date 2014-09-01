@@ -1,0 +1,9 @@
+<?xml version = "1.0"?>
+<config>
+  <modules>
+	<TriggeredMessaging_DigitalDataLayer>
+        <active>true</active>
+        <codePool>community</codePool>
+	</TriggeredMessaging_DigitalDataLayer>
+   </modules>
+</config>

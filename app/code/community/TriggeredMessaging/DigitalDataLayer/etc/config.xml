@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <TriggeredMessaging_DigitalDataLayer>
+      <version>0.3.0</version>
+    </TriggeredMessaging_DigitalDataLayer>
+  </modules>
+
+  <global>
+    <models>
+        <digital_data_layer_main>
+          <class>TriggeredMessaging_DigitalDataLayer_Model</class>
+        </digital_data_layer_main>
+    </models>
+    <helpers>
+      <digital_data_layer_main>
+        <class>TriggeredMessaging_DigitalDataLayer_Helper</class>
+      </digital_data_layer_main>
+    </helpers>
+    <blocks>
+        <digital_data_layer_main>
+          <class>TriggeredMessaging_DigitalDataLayer_Block</class>
+        </digital_data_layer_main>
+    </blocks>
+  </global>
+
+  <frontend>
+    <!-- Layout -->
+    <layout>
+      <updates>
+        <triggered_messaging_digital_data_layer>
+          <file>triggeredmessaging/digital_data_layer.xml</file>
+        </triggered_messaging_digital_data_layer>
+      </updates>
+    </layout>
+    <events>
+      <controller_action_layout_load_before>
+        <observers>
+          <TriggeredMessaging_DigitalDataLayer_Model_Page_Observer>
+            <type>singleton</type>
+            <class>digital_data_layer_main/page_observer</class>
+            <method>setDigitalDataLayer</method>
+          </TriggeredMessaging_DigitalDataLayer_Model_Page_Observer>
+        </observers>
+      </controller_action_layout_load_before>
+      <sales_quote_save_after>
+        <observers>
+          <triggeredmessaging_digital_data_layer>
+            <class>digital_data_layer_main/observer</class>
+            <method>registerQuoteChange</method>
+          </triggeredmessaging_digital_data_layer>
+        </observers>
+      </sales_quote_save_after>
+    </events>
+  </frontend>
+
+  <!-- Admin Configuration Default Values -->
+  <default>
+    <triggered_messaging>
+      <triggered_messaging_digital_data_layer_enabled>1</triggered_messaging_digital_data_layer_enabled>
+      <triggered_messaging_digital_data_layer_debug_enabled>0</triggered_messaging_digital_data_layer_debug_enabled>
+      <triggered_messaging_script_enabled>1</triggered_messaging_script_enabled>
+      <triggered_messaging_website_id></triggered_messaging_website_id>
+    </triggered_messaging>
+  </default>
+</config>

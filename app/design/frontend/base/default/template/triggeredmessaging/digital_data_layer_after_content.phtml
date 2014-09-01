@@ -1,0 +1,58 @@
+<?php try {
+
+  /* @var $this TriggeredMessaging_DigitalDataLayer_Block_Ddl */
+  $triggered_messaging_digital_data_layer_enabled = Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_enabled');
+
+  // extract variable only when digital data layer is enabled
+  if ($triggered_messaging_digital_data_layer_enabled == 1) :
+
+    $observer = 'digital_data_layer_main/page_observer';
+    $mage = Mage::getSingleton($observer);
+
+    $page = $mage->getPage();
+    if (isset($page['category']) &&
+      isset($page['category']['pageType'])) {
+        switch ($page['category']['pageType']) {
+          case 'category':
+          case 'search':
+          case 'tag':
+            break;
+          default:
+            return;
+        }
+    }
+
+    // Grab product list data (from category and search pages)
+    $that = Mage::getBlockSingleton('catalog/product_list');
+    if (!$that) return;
+    $_productCollection = $that->getLoadedProductCollection();
+    if (!$_productCollection) return;
+    if ($_productCollection->count()===0) return;
+
+    // Extract products displayed on category page
+    // Need to do it after content block as the specified products are loaded then
+    $products = array();
+    foreach ($_productCollection as $_product) {
+      array_push($products, $mage->_getProductModel($_product));
+    }
+
+    $preloaded_product         = $mage->getProduct();
+?>
+<!-- W3C Digital Data Layer Extra Info Start -->
+<script type="text/javascript">
+try {
+  <?php if ($products) : ?>
+    <?php if (!$preloaded_product) : ?>
+  window.digitalData.product         = <?php echo json_encode($products) ?>;
+    <?php else : ?>
+  window.digitalData.product.push.apply(window.digitalData.product, <?php echo json_encode($products) ?>);
+    <?php endif; ?>
+  <?php endif; ?>
+} catch(e) {
+}
+</script>
+<!-- W3C Digital Data Layer Extra Info End -->
+<?php
+    endif; 
+
+  } catch (Exception $e) {} ?>

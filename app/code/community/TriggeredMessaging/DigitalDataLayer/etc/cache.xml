@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <placeholders>
+        <triggeredmessaging_ddl_session_data>
+            <block>digital_data_layer_main/ddl</block>
+            <name>digital_data_layer_session_data</name>
+            <placeholder>DDL_SESSION</placeholder>
+            <container>TriggeredMessaging_DigitalDataLayer_Model_Container_Ddl</container>
+        </triggeredmessaging_ddl_session_data>
+    </placeholders>
+</config>

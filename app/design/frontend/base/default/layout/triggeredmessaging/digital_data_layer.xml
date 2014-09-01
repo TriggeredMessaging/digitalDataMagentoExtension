@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<layout version="1.0.0">
+    <default>
+      <reference name="head">
+        <block type="digital_data_layer_main/ddl" name="digital_data_layer" as="digital_data_layer" template="triggeredmessaging/digital_data_layer.phtml"/>
+      </reference>
+    </default>
+    <tms_block_after_content>
+      <reference name="content">
+        <block type="digital_data_layer_main/ddl" name="digital_data_layer" as="digital_data_layer" template="triggeredmessaging/digital_data_layer_after_content.phtml"/>
+      </reference>
+    </tms_block_after_content>
+</layout>
