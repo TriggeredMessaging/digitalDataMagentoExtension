@@ -111,7 +111,7 @@
                         <TriggeredMessaging_Info_Support_Extension translate="label">
                             <label>Plugin Support</label>
                             <frontend_type>label</frontend_type>
-                            <comment><![CDATA[ For issues with the extension, create an issue in the github repository: <a href="https://github.com/TriggeredMessaging/digitalDataMagentoExtension/issues">TriggeredMessaging/digitalDataMagentoExtension</a> ]]></comment>
+                            <comment><![CDATA[ For issues with the extension, create an issue in the github repository: <a href="https://github.com/TriggeredMessaging/digitalDataMagentoExtension/issues" target="_blank">TriggeredMessaging/digitalDataMagentoExtension</a> ]]></comment>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
