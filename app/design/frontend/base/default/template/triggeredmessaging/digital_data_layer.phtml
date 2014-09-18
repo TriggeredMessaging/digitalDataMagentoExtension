@@ -20,6 +20,12 @@
   $transaction     = $mage->getTransaction();
   $events          = $mage->getEvents();
 ?>
+
+
+
+
+
+
 <?php
   try {
     // Extract things only available within template (and not model)
@@ -32,6 +38,8 @@
   } catch(Exception $e) {}
 ?>
 <!-- W3C Digital Data Layer Start -->
+
+
 <script type="text/javascript">
 try {
   window.digitalData = window.digitalData || {};
@@ -59,10 +67,19 @@ try {
 <!-- W3C Digital Data Layer End -->
 <?php endif; ?>
 
+
 <?php if ($triggered_messaging_script_enabled) :?>
+
 <!-- Triggered Messaging Script Start -->
 <?php if ($triggered_messaging_website_id) :?>
 <script defer="defer" async="async" src='//d81mfvml8p5ml.cloudfront.net/<?php echo $triggered_messaging_website_id; ?>.js'></script>
+
+<?php if ($mage->_isConfirmation()) :?>
+  <?php $pcqs = $mage->getPurchaseCompleteQs(); ?>
+  <img src="//d1f0tbk1v3e25u.cloudfront.net/pc/<?php echo $triggered_messaging_website_id; ?>/?<?php echo $pcqs; ?>" />
+<?php endif;?>
+
+
 <?php else: ?>
 <script type="text/javascript">
 console.log("You have enabled the Triggered Messaging script from the Magento Admin Configuration Panel, but have not supplied a website ID. Please contact hello@triggeredmessaging.com if you would like some assistance.");

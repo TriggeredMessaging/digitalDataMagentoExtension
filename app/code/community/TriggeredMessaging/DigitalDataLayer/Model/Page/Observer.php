@@ -167,6 +167,25 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
     return $this->_version;
   }
 
+  public function getPurchaseCompleteQs() {
+
+        $orderId = $this->_getCheckoutSession()->getLastOrderId();
+        if ($orderId) {
+          $order = $this->_getSalesOrder()->load($orderId);
+          $email = $order->getCustomerEmail();
+        }else{
+        $email = $user->getEmail();
+      }
+    $qs = "e=" . urlencode($email);
+
+
+   if($orderId){
+    $qs = $qs . "&r=" . urlencode($orderId);
+   }
+
+    return  $qs;
+  }
+
   public function getUser() {
     return $this->_user;
   }
