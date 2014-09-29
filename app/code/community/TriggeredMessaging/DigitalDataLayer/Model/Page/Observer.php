@@ -166,26 +166,25 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
   public function getVersion() {
     return $this->_version;
   }
-
+  
   public function getPurchaseCompleteQs() {
 
-        $orderId = $this->_getCheckoutSession()->getLastOrderId();
-        if ($orderId) {
-          $order = $this->_getSalesOrder()->load($orderId);
-          $email = $order->getCustomerEmail();
-        }else{
-        $email = $user->getEmail();
-      }
+    $orderId = $this->_getCheckoutSession()->getLastOrderId();
+    if ($orderId) {
+      $order = $this->_getSalesOrder()->load($orderId);
+      $email = $order->getCustomerEmail();
+    }else{
+      $email = $user->getEmail();
+    }
     $qs = "e=" . urlencode($email);
 
-
-   if($orderId){
+    if($orderId){
     $qs = $qs . "&r=" . urlencode($orderId);
-   }
+    }
 
     return  $qs;
   }
-
+  
   public function getUser() {
     return $this->_user;
   }
@@ -300,7 +299,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       $this->_page['category'] = array();
       if (Mage::registry('current_category')) {
         // There must be a better way than this
-        $this->_page['category']['primaryCategory'] = Mage::registry('current_category')->getData()['name'];
+        $this->_page['category']['primaryCategory'] =  Mage::registry('current_category')->getName();
       }
       // $this->_page['category']['subCategory1'];
       $this->_page['category']['pageType'] = $this->_getPageType();
@@ -331,6 +330,8 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       $this->_user = array();
       $user    = $this->_getCustomer();
       $user_id = $user->getEntityId();
+      $firstName = $user->getFirstname();
+      $lastName = $user->getLastname();
 
       if ($this->_isConfirmation()) {
         $orderId = $this->_getCheckoutSession()->getLastOrderId();
@@ -351,7 +352,12 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       if ($user_id) {
         $profile['profileInfo']['profileID'] = (string) $user_id;
       }
-      // $profile['profileInfo']['userName'];
+      if ($firstName){
+        $profile['profileInfo']['userFirstName'] = $firstName;
+      }
+      if ($lastName){
+        $profile['profileInfo']['userLastName'] = $lastName;
+      }
       if ($email) {
         $profile['profileInfo']['email'] = $email;
       }
@@ -455,8 +461,14 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       $product_model['productInfo']['productName'] = $product->getName();
       $product_model['productInfo']['description'] = strip_tags($product->getShortDescription());
       $product_model['productInfo']['productURL'] = $product->getProductUrl();
-      $product_model['productInfo']['productImage'] = $product->getImageUrl();
-      $product_model['productInfo']['productThumbnail'] = $product->getThumbnailUrl();
+
+      //Check if images contain placeholders
+      if(!($product->getImage()=="no_selection")){
+        $product_model['productInfo']['productImage'] = $product->getImageUrl();
+      }
+      if(!($product->getThumbnail()=="no_selection")){
+        $product_model['productInfo']['productThumbnail'] = $product->getThumbnailUrl();
+      }
       // $product_model['productInfo']['manufacturer'];
       if ($product->getWeight()) {
         $product_model['productInfo']['size'] = $product->getWeight();
