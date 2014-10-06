@@ -469,38 +469,57 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       if(!($product->getThumbnail()=="no_selection")){
         $product_model['productInfo']['productThumbnail'] = $product->getThumbnailUrl();
       }
-      // $product_model['productInfo']['manufacturer'];
+      //Attributes
       if ($product->getWeight()) {
-        $product_model['productInfo']['size'] = $product->getWeight();
+      	$product_model['attributes']['weight'] = floatval($product->getWeight());
       }
-
+	try{
+        $attributes = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getAttributeCollection();
+      	foreach($attributes as $attr){
+	    $infoLocation = 'none';
+            $attrCode = $attr->getAttributecode();
+            if($attrCode==='color'||$attrCode==='manufacturer'||$attrCode==='size'){
+		$infoLocation = 'productInfo';
+            } elseif($attr->getData('is_user_defined')) {
+		$infoLocation = 'attributes';
+	    }
+	    if($infoLocation!=='none'){
+	    	if($attr->getData('frontend_class')==='validate-number'){
+            		$product_model[$infoLocation][$attrCode] = floatval($attr->getFrontend()->getValue($product));
+                } elseif($attr->getData('frontend_class')==='validate-digits'){
+			$product_model[$infoLocation][$attrCode] = intval($attr->getFrontend()->getValue($product));
+		} else {
+			if($product->getAttributeText($attrCode)){
+				$product_model[$infoLocation][$attrCode] = $product->getAttributeText($attrCode);
+			}
+	    	}
+	    } 
+       }
+	} catch(Exception $e){
+	}
       // Category
-      $categories = $this->_getProductCategories($product);
-      if (isset($categories[0])||isset($categories[1])||isset($categories[2])) {
-        $product_model['category'] = array();
-
-        if (isset($categories[0])) {
-          $product_model['category']['primaryCategory'] = $categories[0];
-        }
-        if (isset($categories[1])) {
-          $product_model['category']['subCategory1'] = $categories[1];
-
-          // Delete if subcategory is a duplicate of the primary category
-          if (isset($categories[0]) && $categories[0]===$categories[1]) {
-            unset( $product_model['category']['subCategory1'] );
-          }
-        }
-        if (isset($categories[2])) {
-          $product_model['category']['subCategory2'] = $categories[2];
-
-          // Delete if subcategory is a duplicate of previous subcategory
-          if (isset($categories[1]) && $categories[1]===$categories[2]) {
-            unset( $product_model['category']['subCategory2'] );
-          }
-        }
-
-        // $product_model['category']['productType'];
-      }
+      // Iterates through all categories, checking for duplicates
+      $allcategories = $this->_getProductCategories($product);
+      if($allcategories){
+      	$catiterator = 0;
+      	$setCategories = array();
+	foreach($allcategories as $cat){
+		if($catiterator==0){
+			$product_model['category']['primaryCategory'] = $cat;
+			$catiterator++;
+			
+		} else {
+			if(!in_array($cat, $setCategories)){
+				$product_model['category']["subCategory$catiterator"] = $cat;
+				$catiterator++;
+			}
+		}
+		array_push($setCategories, $cat);
+	}
+	if($product->getTypeID()){
+        	$product_model['category']['productType'] = $product->getTypeID();
+	}
+     }
 
       // Price
       $product_model['price'] = array();
@@ -724,7 +743,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
           }
 
           // $litem_model['linkedProduct'] = array();
-          // $litem_model['attributes'] = array();
+	  // $litem_model['attributes'] = array();
 
           array_push($line_items, $litem_model);
         }
@@ -977,14 +996,15 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $transaction['total']['shippingMethod'] = $this->_extractShippingMethod($order);
 
         // Get addresses
-        $shippingId        = $order->getShippingAddress()->getId();
-        $address           = $this->_getOrderAddress()->load($shippingId);
-        $billingAddress    = $order->getBillingAddress();
-        $shippingAddress   = $order->getShippingAddress();
-        $transaction['profile'] = array();
-        $transaction['profile']['address']  = $this->_getAddress($billingAddress);
-        $transaction['profile']['shippingAddress'] = $this->_getAddress($shippingAddress);
-
+	$transaction['profile'] = array();
+	if($order->getBillingAddress()){
+        	$billingAddress    = $order->getBillingAddress();
+        	$transaction['profile']['address']  = $this->_getAddress($billingAddress);
+	}
+	if($order->getShippingAddress()){
+		$shippingAddress   = $order->getShippingAddress();
+		$transaction['profile']['shippingAddress'] = $this->_getAddress($shippingAddress);
+	}
         // Get items
         $items                     = $order->getAllItems();
         $line_items                = $this->_getLineItems($items, 'transaction');
