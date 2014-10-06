@@ -858,8 +858,12 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       if ($this->_extractShippingMethod($quote)) {
         $cart['price']['shippingMethod'] = $this->_extractShippingMethod($quote);
       }
-      $cart['price']['priceWithTax'] = (float) $quote->getShippingAddress()->getTaxAmount() + $quote->getBaseSubtotal(); // TODO: Find a better way
-      $cart['price']['cartTotal'] =  (float) $quote->getGrandTotal();
+      if ($quote->getShippingAddress()->getTaxAmount() && $quote->getBaseSubtotal()){
+        $cart['price']['priceWithTax'] = (float) $quote->getShippingAddress()->getTaxAmount() + $quote->getBaseSubtotal(); // TODO: Find a better way
+      }
+      if($quote->getGrandTotal()){
+        $cart['price']['cartTotal'] =  (float) $quote->getGrandTotal();
+      }
       // $cart['attributes'] = array();
       if ($cart['price']['basePrice']===0.0&&$cart['price']['cartTotal']===0.0&&$cart['price']['priceWithTax']===0.0) {
         unset($cart['price']);
