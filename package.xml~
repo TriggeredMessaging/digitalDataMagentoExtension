@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>W3CDigitalDataLayerByTriggeredMessaging</name>
-    <version>0.3.5</version>
+    <version>0.3.4</version>
     <stability>stable</stability>
     <license uri="http://opensource.org/licenses/apachepl.php">Apache Software License v2</license>
     <channel>community</channel>
