@@ -26,8 +26,10 @@
     if (!$page['pageInfo']) {
       $page['pageInfo'] = array();
     }
-    if (!$page['pageInfo']['pageName']) {
+    if (!$page['pageInfo']['pageName'] || $page['pageInfo']['pageName']==='') {
       $page['pageInfo']['pageName'] = $this->getLayout()->getBlock('head')->getTitle();
+    } else {
+        unset($page['pageInfo']['pageName']);
     }
   } catch(Exception $e) {}
 ?>

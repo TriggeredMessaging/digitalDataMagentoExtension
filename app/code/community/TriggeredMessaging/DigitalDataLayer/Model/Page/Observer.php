@@ -276,7 +276,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
       $this->_page['pageInfo'] = array();
       // $this->_page['pageInfo']['pageID']
-      // $this->_page['pageInfo']['pageName']
+      $this->_page['pageInfo']['pageName'] = '';
       $this->_page['pageInfo']['destinationURL'] = Mage::helper('core/url')->getCurrentUrl();
       $referringURL = Mage::app()->getRequest()->getServer('HTTP_REFERER');
       if ($referringURL) {
@@ -493,7 +493,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 				$product_model[$infoLocation][$attrCode] = $product->getAttributeText($attrCode);
 			}
 	    	}
-	    } 
+	    }
        }
 	} catch(Exception $e){
 	}
@@ -507,7 +507,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 		if($catiterator==0){
 			$product_model['category']['primaryCategory'] = $cat;
 			$catiterator++;
-			
+
 		} else {
 			if(!in_array($cat, $setCategories)){
 				$product_model['category']["subCategory$catiterator"] = $cat;
@@ -558,7 +558,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
           $product_model['price']['basePrice'] = $normal_price;
         }
       }
-      
+
       if ($this->_debug) {
         $product_model['price']['all'] = array();
         $product_model['price']['all']['getPrice'] = $product->getPrice();
@@ -717,7 +717,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
           } else {
             $litem_model['quantity'] = floatval($item->getQtyOrdered());
           }
-          
+
           if (!is_array($litem_model['price'])) {
             $litem_model['price'] = array();
           }
@@ -827,7 +827,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
     try {
       $basket = $this->_getCheckoutSession();
-      
+
       if (!isset($basket)) {
         return;
       }
@@ -841,7 +841,11 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $cart['cartID'] = (string) $cart_id;
       }
       $cart['price'] = array();
-      $cart['price']['basePrice'] = (float) $quote->getBaseSubtotal();
+      if($quote->getBaseSubtotal()){
+        $cart['price']['basePrice'] = (float) $quote->getBaseSubtotal();
+      } else {
+        $cart['price']['basePrice'] = 0.0;
+      }
       if ($quote->getShippingAddress()->getCouponCode()) {
         $cart['price']['voucherCode'] = $quote->getShippingAddress()->getCouponCode();
       }
@@ -849,9 +853,10 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $cart['price']['voucherDiscount'] = abs((float) $quote->getShippingAddress()->getDiscountAmount());
       }
       $cart['price']['currency'] = $this->_getCurrency();
-
-      $taxRate = (float) $quote->getShippingAddress()->getTaxAmount() / $quote->getBaseSubtotal();
-      $cart['price']['taxRate'] = round($taxRate, 3); // TODO: Find a better way
+      if($cart['price']['basePrice'] > 0.0){
+        $taxRate = (float) $quote->getShippingAddress()->getTaxAmount() / $cart['price']['basePrice'];
+        $cart['price']['taxRate'] = round($taxRate, 3); // TODO: Find a better way
+      }
       if ($quote->getShippingAmount()) {
         $cart['price']['shipping'] = (float) $quote->getShippingAmount();
       }
@@ -860,9 +865,13 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       }
       if ($quote->getShippingAddress()->getTaxAmount() && $quote->getBaseSubtotal()){
         $cart['price']['priceWithTax'] = (float) $quote->getShippingAddress()->getTaxAmount() + $quote->getBaseSubtotal(); // TODO: Find a better way
+      } else {
+        $cart['price']['priceWithTax'] = 0.0;
       }
       if($quote->getGrandTotal()){
         $cart['price']['cartTotal'] =  (float) $quote->getGrandTotal();
+      } else {
+        $cart['price']['cartTotal'] = 0.0;
       }
       // $cart['attributes'] = array();
       if ($cart['price']['basePrice']===0.0&&$cart['price']['cartTotal']===0.0&&$cart['price']['priceWithTax']===0.0) {
@@ -871,7 +880,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
       // Line items
       $items = $quote->getAllVisibleItems();
-      if (!$items && $cart['price']) {
+      if (!$items && isset($cart['price'])) {
         if ($this->_debug) {
           $cart['price']['testLog'] = "Second method used to retrieve cart items.";
         }
