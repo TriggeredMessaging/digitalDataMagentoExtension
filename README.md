@@ -66,9 +66,12 @@ system.xml
 
 Authors
 -------
-Muhammed Onu Miah
-Blake Finney
-David Henderson
+
+[Muhammed Onu Miah](http://github.com/momiah)
+
+[Blake Finney](http://github.com/blakefinney)
+
+[David Henderson](http://github.com/dhendo)
 
 
 License
