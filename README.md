@@ -67,6 +67,8 @@ system.xml
 Authors
 -------
 Muhammed Onu Miah
+Blake Finney
+David Henderson
 
 
 License
