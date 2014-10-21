@@ -472,7 +472,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
     try {
       // Product Info
       $product_model['productInfo'] = array();
-      $product_model['productInfo']['productID'] = $productId;
+      $product_model['productInfo']['productID'] = $product->getId();
       $product_model['productInfo']['productName'] = $product->getName();
       $product_model['productInfo']['description'] = strip_tags($product->getShortDescription());
       $product_model['productInfo']['productURL'] = $product->getProductUrl();
