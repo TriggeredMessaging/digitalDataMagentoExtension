@@ -344,7 +344,6 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $email = $user->getEmail();
       }
 
-      // $this->_user['segment'] = array();
       $this->_user['profile'] = array();
 
       $profile = array();
@@ -364,8 +363,9 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       }
       $profile['profileInfo']['language'] = Mage::getStoreConfig('general/locale/code', Mage::app()->getStore()->getId());
       $profile['profileInfo']['returningStatus'] = $user_id ? 'true' : 'false';
-      if($userGroup){
-       $profile['profileInfo']['type'] = $userGroup->getData('customer_group_code');
+      if($userGroup && $this->_userGroupExp){
+       $profile['profileInfo']['segment']['userGroupId'] = $userGroup->getData('customer_group_id');
+       $profile['profileInfo']['segment']['userGroup'] = $userGroup->getData('customer_group_code');
       }
 
       // $profile['address'] = array();
@@ -1070,6 +1070,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
       if ($triggered_messaging_digital_data_layer_enabled==1) {
         $this->_debug = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled');
+        $this->_userGroupExp = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled');
 
         $this->_setUser();
         $this->_setPage();
