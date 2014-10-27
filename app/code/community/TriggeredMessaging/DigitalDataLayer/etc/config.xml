@@ -59,6 +59,7 @@
     <triggered_messaging>
       <triggered_messaging_digital_data_layer_enabled>1</triggered_messaging_digital_data_layer_enabled>
       <triggered_messaging_digital_data_layer_debug_enabled>0</triggered_messaging_digital_data_layer_debug_enabled>
+      <triggered_messaging_digital_data_layer_user_group_enabled>0</triggered_messaging_digital_data_layer_user_group_enabled>
       <triggered_messaging_script_enabled>1</triggered_messaging_script_enabled>
       <triggered_messaging_website_id></triggered_messaging_website_id>
     </triggered_messaging>

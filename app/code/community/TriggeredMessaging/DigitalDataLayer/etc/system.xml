@@ -49,6 +49,21 @@
                                 <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
                             </depends>
                         </TriggeredMessaging_DigitalDataLayer_DebugEnabled>
+
+			<TriggeredMessaging_DigitalDataLayer_User_GroupEnabled translate="label">
+                            <label>Enable User Group Exposure</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled</config_path>
+                            <comment><![CDATA[ This will expose the user group that any logged in user is a part of. Disable if you require this to be kept private. ]]></comment>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                            </depends>
+                        </TriggeredMessaging_DigitalDataLayer_User_GroupEnabled>
                     </fields>
                     <expanded>1</expanded>
                 </TriggeredMessaging_DigitalDataLayer_Settings>
