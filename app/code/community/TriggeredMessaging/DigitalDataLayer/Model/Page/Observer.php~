@@ -1085,7 +1085,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
     try {
       $triggered_messaging_digital_data_layer_enabled = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_enabled');
 
-      if ($triggered_messaging_digital_data_layer_enabled==1) {
+      if ($triggered_messaging_digital_data_layer_enabled===1) {
         $this->_debug = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled');
         $this->_userGroupExp = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled');
         $this->_expAttr = explode(',',Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled'));
