@@ -69,7 +69,7 @@
                             <frontend_type>multiselect</frontend_type>
                             <source_model>TriggeredMessaging_DigitalDataLayer_Model_System_Config_Source_Productattributes</source_model>
                             <config_path>triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled</config_path>
-                            <comment><![CDATA[ Select the custom product attributes that you would like to expose. NOTE: You must use Shift or Ctrl to select multiple attributes.]]></comment>
+                            <comment><![CDATA[ Select the custom product attributes that you would like to expose. NOTE: You must use Shift or Ctrl to select multiple attributes. ]]></comment>
                             <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
