@@ -166,7 +166,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
   public function getVersion() {
     return $this->_version;
   }
-  
+
   public function getPurchaseCompleteQs() {
 
     $orderId = $this->_getCheckoutSession()->getLastOrderId();
@@ -184,7 +184,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
     return  $qs;
   }
-  
+
   public function getUser() {
     return $this->_user;
   }
@@ -422,7 +422,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
     return Mage::app()->getStore()->getCurrentCurrencyCode();
   }
 
-  public function _getProductModel($product, $inCart) {
+  public function _getProductModel($product, $_page_) {
     /*
       Section 6.4 of http://www.w3.org/2013/12/ceddl-201312.pdf
       product: [
@@ -458,7 +458,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
     $product_model = array();
     $options = array();
     //If there is optional data then add it
-    if($inCart){
+    if($_page_==='cart'){
             $opt = $product->getProduct()->getTypeInstance(true)->getOrderOptions($product->getProduct());
             if(isset($opt['attributes_info'])){
                 foreach($opt['attributes_info'] as $attribute){
@@ -468,7 +468,10 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
             $productId = $product->getProductId();
             $product   = $this->_getProduct($productId);
           }
-
+    if($_page_==='list'){
+        $productId = $product->getId();
+        $product   = $this->_getProduct($productId);
+    }
     try {
       // Product Info
       $product_model['productInfo'] = array();
@@ -478,10 +481,10 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       $product_model['productInfo']['productURL'] = $product->getProductUrl();
 
       //Check if images contain placeholders
-      if($product->getImage() && !($product->getImage()=="no_selection")){
+      if($product->getImage() && $product->getImage()!=="no_selection"){
         $product_model['productInfo']['productImage'] = $product->getImageUrl();
       }
-      if($product->getThumbnail() && !($product->getThumbnail()=="no_selection")){
+      if($product->getThumbnail() && $product->getThumbnail()!=="no_selection"){
         $product_model['productInfo']['productThumbnail'] = $product->getThumbnailUrl();
       }
       //Attributes
@@ -498,7 +501,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
             } elseif($attr->getData('is_user_defined')) {
 		        $infoLocation = 'attributes';
 	        }
-	        if($infoLocation!=='none'){
+	        if($infoLocation!=='none' && in_array($attrCode,$this->_expAttr)){
 	    	    if($attr->getData('frontend_class')==='validate-number'){
 	    	        if($attr->getFrontend()->getValue($product)!=='No'){
             		    $product_model[$infoLocation][$attrCode] = floatval($attr->getFrontend()->getValue($product));
@@ -527,7 +530,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       	$catiterator = 0;
       	$setCategories = array();
 	foreach($allcategories as $cat){
-		if($catiterator==0){
+		if($catiterator===0){
 			$product_model['category']['primaryCategory'] = $cat;
 			$catiterator++;
 
@@ -546,9 +549,14 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
       // Price
       $product_model['price'] = array();
-      $product_model['price']['basePrice'] = floatval($product->getPrice());
+      if(!$product->getSpecialPrice()){
+        $product_model['price']['basePrice'] = floatval($product->getPrice());
+      } else {
+        $product_model['price']['basePrice'] = floatval($product->getSpecialPrice());
+        $product_model['price']['regularPrice'] = floatval($product->getPrice());
+      }
       $product_model['price']['currency'] = $this->_getCurrency();
-      $product_model['price']['priceWithTax'] = floatval($product->getFinalPrice()); // May be lower due to discounts! TODO
+      $product_model['price']['priceWithTax'] = floatval($product->getFinalPrice());
 
       if (!$product_model['price']['priceWithTax']) {
         unset( $product_model['price']['priceWithTax'] );
@@ -606,7 +614,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       $product_model['price']['taxRate'] = ((float) $percent) / 100;
 
       // For configurable/grouped/composite products, add all associated products to 'linkedProduct'
-      if(!$inCart){
+      if($_page_==='product'){
       if ($product->isConfigurable() || $product->isGrouped() || $product->isComposite()) {
 
         $product_model['linkedProduct'] = array();
@@ -661,6 +669,12 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $product_model['more']['isRecurring'] = $product->isRecurring();
         $product_model['more']['isComposite'] = $product->isComposite();
         $product_model['more']['getTypeId'] = $product->getTypeId();
+        $product_model['more']['getImage'] = $product->getImage();
+        $product_model['more']['getImageURL'] = $product->getImageUrl();
+        $product_model['more']['getSmallImage'] = $product->getSmallImage();
+        $product_model['more']['getSmallImageURL'] = $product->getSmallImageUrl();
+        $product_model['more']['getThumbnail'] = $product->getThumbnail();
+        $product_model['more']['getThumbnailURL'] = $product->getThumbnailUrl();
       }
 
       // Other
@@ -731,12 +745,17 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       foreach($items as $item) {
         $productId = $item->getProductId();
         $product   = $this->_getProduct($productId);
-        // product needs to be visible
-        if ($product->isVisibleInSiteVisibility()) {
 
-          $litem_model  = $this->_getProductModel($item, true);
+        $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($productId);
+        if($parentIds[0]){
+            $litem_model  = $this->_getProductModel($product, 'linked');
+            $litem_model['linkedProduct'] = array();
+            array_push($litem_model['linkedProduct'], $this->_getProductModel($this->_getProduct($parentIds[0]), 'linked'));
+        } else {
+          $litem_model  = $this->_getProductModel($item, 'cart');
+        }
 
-          if ($page_type == 'cart') {
+          if ($page_type === 'cart') {
             $litem_model['quantity'] = floatval($item->getQty());
           } else {
             $litem_model['quantity'] = floatval($item->getQtyOrdered());
@@ -766,11 +785,9 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
             $litem_model['price']['all']['_getConvertedPrice'] = $product->getConvertedPrice();
           }
 
-          // $litem_model['linkedProduct'] = array();
 	  // $litem_model['attributes'] = array();
 
           array_push($line_items, $litem_model);
-        }
       }
     } catch (Exception $e) {
     }
@@ -801,7 +818,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       $product  = $this->_getCurrentProduct();
       if (!$product) return false;
       $this->_product = array();
-      array_push($this->_product, $this->_getProductModel($product,false));
+      array_push($this->_product, $this->_getProductModel($product,'product'));
     } catch (Exception $e) {
     }
   }
@@ -907,7 +924,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         if ($this->_debug) {
           $cart['price']['testLog'] = "Second method used to retrieve cart items.";
         }
-        
+
         // In case items were not retrieved for some reason
         $cartHelper = Mage::helper('checkout/cart');
         $items = $cartHelper->getCart()->getItems();
@@ -937,7 +954,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
     */
     try {
       $grandTotalWithoutShipping = $order->getGrandTotal() - $order->getShippingAmount();
-      if ($tax == 0 || $grandTotalWithoutShipping > $order->getSubtotal()) {
+      if ($tax === 0 || $grandTotalWithoutShipping > $order->getSubtotal()) {
         return false;
       } else {
         return true;
@@ -1071,6 +1088,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       if ($triggered_messaging_digital_data_layer_enabled==1) {
         $this->_debug = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled');
         $this->_userGroupExp = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled');
+        $this->_expAttr = explode(',',Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled'));
 
         $this->_setUser();
         $this->_setPage();

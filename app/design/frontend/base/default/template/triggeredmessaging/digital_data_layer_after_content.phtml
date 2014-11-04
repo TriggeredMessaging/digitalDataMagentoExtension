@@ -33,7 +33,7 @@
     // Need to do it after content block as the specified products are loaded then
     $products = array();
     foreach ($_productCollection as $_product) {
-      array_push($products, $mage->_getProductModel($_product));
+      array_push($products, $mage->_getProductModel($_product, 'list'));
     }
 
     $preloaded_product         = $mage->getProduct();
