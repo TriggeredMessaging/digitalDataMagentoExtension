@@ -914,7 +914,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       } else {
         $cart['price']['priceWithTax'] = 0.0;
       }
-      if($quote->getGrandTotal() || $quote->getGrandTotal()<0){
+      if($quote->getGrandTotal() && $quote->getGrandTotal()<0){
         $cart['price']['cartTotal'] =   (float) $quote->getGrandTotal();
       } else {
         $cart['price']['cartTotal'] = 0.0;
