@@ -19,6 +19,7 @@
   $listing         = $mage->getListing();
   $transaction     = $mage->getTransaction();
   $events          = $mage->getEvents();
+  $pluginVersion   = (string) Mage::getConfig()->getNode()->modules->TriggeredMessaging_DigitalDataLayer->version;
 ?>
 <?php
   try {
@@ -55,6 +56,10 @@ try {
   <?php if ($events): ?>
   window.digitalData.events          = <?php echo json_encode($events); ?>;
   <?php endif; ?>
+  <?php if ($pluginVersion): ?>
+  window.digitalData.pluginVersion   = <?php echo json_encode($pluginVersion); ?>;
+  <?php endif; ?>
+  window.digitalData.generatedDate   = new Date().toDateString() + ' ' + new Date().toTimeString();
 } catch(e) {
 }
 </script>
