@@ -162,7 +162,13 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
   /*
    * Get information on pages to pass to front end
    */
-
+  public function getCurrentPrice($_price,$p1,$p2){
+   if($p1){
+      return number_format(Mage::helper('core')->currency((float)$_price,$p1,$p2),2,'.','');
+   } else {
+      return floatval(number_format(Mage::helper('core')->currency((float)$_price,$p1,$p2),2,'.',''));
+   }
+  }
   public function getVersion() {
     return $this->_version;
   }
@@ -488,7 +494,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $product_model['productInfo']['productThumbnail'] = $product->getThumbnailUrl();
       }
       //Attributes
-      if ($product->getWeight()) {
+      if ($product->getWeight() && in_array('weight',$this->_expAttr)) {
       	$product_model['attributes']['weight'] = floatval($product->getWeight());
       }
 	try{
@@ -549,14 +555,14 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
       // Price
       $product_model['price'] = array();
-      if(!$product->getSpecialPrice()){
-        $product_model['price']['basePrice'] = floatval($product->getPrice());
+      if(!$product->getSpecialPrice() || $product->getSpecialPrice()!==$product->getFinalPrice()){
+        $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getPrice()),false,false);
       } else {
-        $product_model['price']['basePrice'] = floatval($product->getSpecialPrice());
-        $product_model['price']['regularPrice'] = floatval($product->getPrice());
+        $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getSpecialPrice()),false,false);
+        $product_model['price']['regularPrice'] = $this->getCurrentPrice(floatval($product->getPrice()),false,false);
       }
       $product_model['price']['currency'] = $this->_getCurrency();
-      $product_model['price']['priceWithTax'] = floatval($product->getFinalPrice());
+      $product_model['price']['priceWithTax'] = $this->getCurrentPrice(floatval($product->getFinalPrice()),false,false);
 
       if (!$product_model['price']['priceWithTax']) {
         unset( $product_model['price']['priceWithTax'] );
@@ -564,13 +570,13 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
       // In case 'basePrice' did not exist
       if (!$product_model['price']['basePrice']) {
-        $product_model['price']['basePrice'] = floatval($product->getGroupPrice());
+        $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getGroupPrice()),false,false);
       }
       if (!$product_model['price']['basePrice']) {
-        $product_model['price']['basePrice'] = floatval($product->getMinimalPrice());
+        $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getMinimalPrice()),false,false);
       }
       if (!$product_model['price']['basePrice']) {
-        $product_model['price']['basePrice'] = floatval($product->getSpecialPrice());
+        $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getSpecialPrice()),false,false);
       }
       if (!$product_model['price']['basePrice']) {
         // Extract price for bundle products
@@ -584,7 +590,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
             }
             $_selection = $_option->getDefaultSelection();
             if ($_selection === null) continue;
-            $normal_price += floatval($_selection->getPrice());
+            $normal_price += $this->getCurrentPrice(floatval($_selection->getPrice()),false,false);
           }
           $product_model['price']['basePrice'] = $normal_price;
         }
@@ -592,17 +598,17 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
       if ($this->_debug) {
         $product_model['price']['all'] = array();
-        $product_model['price']['all']['getPrice'] = $product->getPrice();
-        $product_model['price']['all']['getMinimalPrice'] = $product->getMinimalPrice();
+        $product_model['price']['all']['getPrice'] = $this->getCurrentPrice($product->getPrice(),false,false);
+        $product_model['price']['all']['getMinimalPrice'] = $this->getCurrentPrice($product->getMinimalPrice(),false,false);
         $product_model['price']['all']['getPriceModel'] = $product->getPriceModel();
-        $product_model['price']['all']['getGroupPrice'] = $product->getGroupPrice();
+        $product_model['price']['all']['getGroupPrice'] = $this->getCurrentPrice($product->getGroupPrice(),false,false);
         $product_model['price']['all']['getTierPrice'] = $product->getTierPrice();
         $product_model['price']['all']['getTierPriceCount'] = $product->getTierPriceCount();
         $product_model['price']['all']['getFormatedTierPrice'] = $product->getFormatedTierPrice();
         $product_model['price']['all']['getFormatedPrice'] = $product->getFormatedPrice();
-        $product_model['price']['all']['getFinalPrice'] = $product->getFinalPrice();
+        $product_model['price']['all']['getFinalPrice'] = $this->getCurrentPrice($product->getFinalPrice(),false,false);
         $product_model['price']['all']['getCalculatedFinalPrice'] = $product->getCalculatedFinalPrice();
-        $product_model['price']['all']['getSpecialPrice'] = $product->getSpecialPrice();
+        $product_model['price']['all']['getSpecialPrice'] = $this->getCurrentPrice($product->getSpecialPrice(),false,false);
       }
 
       // Calculate Tax Rate
@@ -642,7 +648,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $min_price = 0.0;
         foreach($simple_collection as $simple_product){
           array_push($product_model['linkedProduct'], $this->_getProductModel($simple_product, false));
-          $simple_product_price = floatval($simple_product->getPrice());
+          $simple_product_price = $this->getCurrentPrice(floatval($simple_product->getPrice()),false,false);
           if ($simple_product_price && (!$min_price || $simple_product_price<$min_price)) {
             $min_price = $simple_product_price;
           }
@@ -650,7 +656,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
         // If price could not be extracted before, can set it now
         if (!$product_model['price']['basePrice']) {
-          $product_model['price']['basePrice'] = floatval($min_price);
+          $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($min_price),false,false);
         }
 
         if (!$product_model['linkedProduct']) {
@@ -772,17 +778,17 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
           }
           // $litem_model['price']['shipping'];
           // $litem_model['price']['shippingMethod'] = $this->_extractShippingMethod($item->getQuote());
-          $litem_model['price']['priceWithTax'] = floatval($item->getBasePriceInclTax()); // TODO: This may be different from that in _getProductModel()
+          $litem_model['price']['priceWithTax'] = $this->getCurrentPrice(floatval($item->getBasePriceInclTax()),false,false); // TODO: This may be different from that in _getProductModel()
           $litem_model['price']['cartTotal'] = floatval($item->getRowTotalInclTax());
 
           if ($this->_debug) {
-            $litem_model['price']['all']['_getCalculationPrice'] = $product->getCalculationPrice();
-            $litem_model['price']['all']['_getCalculationPriceOriginal'] = $product->getCalculationPriceOriginal();
-            $litem_model['price']['all']['_getBaseCalculationPrice'] = $product->getBaseCalculationPrice();
-            $litem_model['price']['all']['_getBaseCalculationPriceOriginal'] = $product->getBaseCalculationPriceOriginal();
-            $litem_model['price']['all']['_getOriginalPrice'] = $product->getOriginalPrice();
-            $litem_model['price']['all']['_getBaseOriginalPrice'] = $product->getBaseOriginalPrice();
-            $litem_model['price']['all']['_getConvertedPrice'] = $product->getConvertedPrice();
+            $litem_model['price']['all']['_getCalculationPrice'] = $this->getCurrentPrice($product->getCalculationPrice(),false,false);
+            $litem_model['price']['all']['_getCalculationPriceOriginal'] = $this->getCurrentPrice($product->getCalculationPriceOriginal(),false,false);
+            $litem_model['price']['all']['_getBaseCalculationPrice'] = $this->getCurrentPrice($product->getBaseCalculationPrice(),false,false);
+            $litem_model['price']['all']['_getBaseCalculationPriceOriginal'] = $this->getCurrentPrice($product->getBaseCalculationPriceOriginal(),false,false);
+            $litem_model['price']['all']['_getOriginalPrice'] = $this->getCurrentPrice($product->getOriginalPrice(),false,false);
+            $litem_model['price']['all']['_getBaseOriginalPrice'] = $this->getCurrentPrice($product->getBaseOriginalPrice(),false,false);
+            $litem_model['price']['all']['_getConvertedPrice'] = $this->getCurrentPrice($product->getConvertedPrice(),false,false);
           }
 
 	  // $litem_model['attributes'] = array();
@@ -882,7 +888,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       }
       $cart['price'] = array();
       if($quote->getBaseSubtotal()){
-        $cart['price']['basePrice'] = (float) $quote->getBaseSubtotal();
+        $cart['price']['basePrice'] = $this->getCurrentPrice(floatval($quote->getBaseSubtotal()),false,false);
       } else {
         $cart['price']['basePrice'] = 0.0;
       }
@@ -904,12 +910,12 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $cart['price']['shippingMethod'] = $this->_extractShippingMethod($quote);
       }
       if ($quote->getShippingAddress()->getTaxAmount() && $quote->getBaseSubtotal()){
-        $cart['price']['priceWithTax'] = (float) $quote->getShippingAddress()->getTaxAmount() + $quote->getBaseSubtotal(); // TODO: Find a better way
+        $cart['price']['priceWithTax'] = (float) $quote->getShippingAddress()->getTaxAmount() + $this->getCurrentPrice($quote->getBaseSubtotal(),false,false);
       } else {
         $cart['price']['priceWithTax'] = 0.0;
       }
-      if($quote->getGrandTotal()){
-        $cart['price']['cartTotal'] =  (float) $quote->getGrandTotal();
+      if($quote->getGrandTotal() && $quote->getGrandTotal()<0){
+        $cart['price']['cartTotal'] =   (float) $quote->getGrandTotal();
       } else {
         $cart['price']['cartTotal'] = 0.0;
       }

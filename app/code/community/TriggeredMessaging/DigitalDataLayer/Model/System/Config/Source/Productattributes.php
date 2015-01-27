@@ -20,6 +20,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_System_Config_Source_Productattr
                 }
                 break;
             }
+            array_push($attributeArray,array('label' => 'weight','value' => weight));
             return $attributeArray;
     }
 }
