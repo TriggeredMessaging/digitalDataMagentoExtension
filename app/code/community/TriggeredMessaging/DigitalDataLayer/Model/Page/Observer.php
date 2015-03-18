@@ -499,7 +499,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
       }
 	try{
         $attributes = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getAttributeCollection();
-      	foreach($attributes as $attr){
+		foreach($attributes as $attr){
 	        $infoLocation = 'none';
             $attrCode = $attr->getAttributecode();
             if($attrCode==='color'||$attrCode==='manufacturer'||$attrCode==='size'){
@@ -507,7 +507,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
             } elseif($attr->getData('is_user_defined')) {
 		        $infoLocation = 'attributes';
 	        }
-	        if($infoLocation!=='none' && in_array($attrCode,$this->_expAttr)){
+	        if($infoLocation!=='none' && in_array($attrCode,$this->_expAttr) && $product->getData($attrCode)){
 	    	    if($attr->getData('frontend_class')==='validate-number'){
 	    	        if($attr->getFrontend()->getValue($product)!=='No'){
             		    $product_model[$infoLocation][$attrCode] = floatval($attr->getFrontend()->getValue($product));
@@ -517,10 +517,8 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 			            $product_model[$infoLocation][$attrCode] = intval($attr->getFrontend()->getValue($product));
 			        }
 		        } else {
-			        if($product->getAttributeText($attrCode)){
-				        $product_model[$infoLocation][$attrCode] = $product->getAttributeText($attrCode);
-			    }
-	    	}
+					$product_model[$infoLocation][$attrCode] = $product->getData($attrCode);
+				}
 	        }
        }
        //Add the options captured earlier
@@ -753,14 +751,14 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
         $product   = $this->_getProduct($productId);
 
         $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($productId);
-        if($parentIds[0]){
+        if(count($parentIds)>0){
             $litem_model  = $this->_getProductModel($product, 'linked');
             $litem_model['linkedProduct'] = array();
             array_push($litem_model['linkedProduct'], $this->_getProductModel($this->_getProduct($parentIds[0]), 'linked'));
         } else {
           $litem_model  = $this->_getProductModel($item, 'cart');
         }
-
+		
           if ($page_type === 'cart') {
             $litem_model['quantity'] = floatval($item->getQty());
           } else {
@@ -1032,6 +1030,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer {
 
     try {
       $orderId = $this->_getCheckoutSession()->getLastOrderId();
+	  
       if ($orderId) {
         $transaction = array();
         $order       = $this->_getSalesOrder()->load($orderId);
