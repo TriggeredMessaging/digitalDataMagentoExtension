@@ -795,7 +795,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 $product = $this->_getProduct($productId);
 
                 $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($productId);
-                if (!empty($parentIds) && count($parentIds) > 0) {
+                if (!empty($parentIds)) {
                     $litem_model = $this->_getProductModel($product, 'linked');
                     $litem_model['linkedProduct'] = array();
                     array_push($litem_model['linkedProduct'], $this->_getProductModel($this->_getProduct($parentIds[0]), 'linked'));
