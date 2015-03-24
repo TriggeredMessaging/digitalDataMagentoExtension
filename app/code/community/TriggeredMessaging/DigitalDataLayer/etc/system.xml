@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config>
-	<tabs>
+    <tabs>
         <TriggeredMessaging_DigitalDataLayer_tab translate="label">
             <label>W3C Digital Data Layer</label>
             <sort_order>100</sort_order>
@@ -27,8 +27,10 @@
                             <label>Enable Digital Data Layer</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_enabled</config_path>
-                            <comment><![CDATA[ See <a href="http://www.w3.org/2013/12/ceddl-201312.pdf" target="_blank">http://www.w3.org/2013/12/ceddl-201312.pdf</a> for the specification. ]]></comment>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_enabled
+                            </config_path>
+                            <comment>
+                                <![CDATA[ See <a href="http://www.w3.org/2013/12/ceddl-201312.pdf" target="_blank">http://www.w3.org/2013/12/ceddl-201312.pdf</a> for the specification. ]]></comment>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -39,43 +41,54 @@
                             <label>Enable Debug Mode</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled</config_path>    
-                            <comment><![CDATA[ Outputs more data about the page to the digitalData layer, for debugging purposes. Should be disabled for production use. ]]></comment>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled
+                            </config_path>
+                            <comment>
+                                <![CDATA[ Outputs more data about the page to the digitalData layer, for debugging purposes. Should be disabled for production use. ]]></comment>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1
+                                </TriggeredMessaging_DigitalDataLayer_Enabled>
                             </depends>
                         </TriggeredMessaging_DigitalDataLayer_DebugEnabled>
 
-			            <TriggeredMessaging_DigitalDataLayer_User_GroupEnabled translate="label">
+                        <TriggeredMessaging_DigitalDataLayer_User_GroupEnabled translate="label">
                             <label>Enable User Group Exposure</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled</config_path>
-                            <comment><![CDATA[ This will expose the user group that any logged in user is a part of. Disable if you require this to be kept private. ]]></comment>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled
+                            </config_path>
+                            <comment>
+                                <![CDATA[ This will expose the user group that any logged in user is a part of. Disable if you require this to be kept private. ]]></comment>
                             <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1
+                                </TriggeredMessaging_DigitalDataLayer_Enabled>
                             </depends>
                         </TriggeredMessaging_DigitalDataLayer_User_GroupEnabled>
                         <TriggeredMessaging_DigitalDataLayer_Attributes_Enabled translate="label">
                             <label>Enable Product Attributes</label>
                             <frontend_type>multiselect</frontend_type>
-                            <source_model>TriggeredMessaging_DigitalDataLayer_Model_System_Config_Source_Productattributes</source_model>
-                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled</config_path>
-                            <comment><![CDATA[ Select the custom product attributes that you would like to expose. NOTE: You must use Shift or Ctrl to select multiple attributes. ]]></comment>
+                            <source_model>
+                                TriggeredMessaging_DigitalDataLayer_Model_System_Config_Source_Productattributes
+                            </source_model>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled
+                            </config_path>
+                            <comment>
+                                <![CDATA[ Select the custom product attributes that you would like to expose. NOTE: You must use Shift or Ctrl to select multiple attributes. ]]></comment>
                             <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <depends>
-                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1
+                                </TriggeredMessaging_DigitalDataLayer_Enabled>
                             </depends>
                         </TriggeredMessaging_DigitalDataLayer_Attributes_Enabled>
                     </fields>
@@ -94,7 +107,8 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>triggered_messaging/triggered_messaging_script_enabled</config_path>
-                            <comment><![CDATA[ <a href="http://www.triggeredmessaging.com/supported-ecommerce-platforms/magento?utm_campaign=magento_plugin&utm_medium=web&utm_source=magento" target="_blank">More information on Triggered Messaging and Magento</a>. ]]></comment>
+                            <comment>
+                                <![CDATA[ <a href="http://www.triggeredmessaging.com/supported-ecommerce-platforms/magento?utm_campaign=magento_plugin&utm_medium=web&utm_source=magento" target="_blank">More information on Triggered Messaging and Magento</a>. ]]></comment>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -105,7 +119,8 @@
                             <label>Website ID</label>
                             <frontend_type>text</frontend_type>
                             <config_path>triggered_messaging/triggered_messaging_website_id</config_path>
-                            <comment><![CDATA[ You can find your Website ID within your <a href="https://admin.triggeredmessaging.com/" target="_blank">Triggered Messaging admin area</a>. ]]>
+                            <comment>
+                                <![CDATA[ You can find your Website ID within your <a href="https://admin.triggeredmessaging.com/" target="_blank">Triggered Messaging admin area</a>. ]]>
                             </comment>
                             <validate>validate-alphanum</validate>
                             <sort_order>2</sort_order>
@@ -118,7 +133,7 @@
                         </TriggeredMessaging_Website_Id>
                     </fields>
                     <expanded>1</expanded>
-               </TriggeredMessaging_Script_Settings>
+                </TriggeredMessaging_Script_Settings>
             </groups>
         </triggeredmessaging_digitaldatalayer_configuration>
 
@@ -140,7 +155,8 @@
                         <TriggeredMessaging_Info_Support_Extension translate="label">
                             <label>Plugin Support</label>
                             <frontend_type>label</frontend_type>
-                            <comment><![CDATA[ For issues with the extension, create an issue in the github repository: <a href="https://github.com/TriggeredMessaging/digitalDataMagentoExtension/issues" target="_blank">TriggeredMessaging/digitalDataMagentoExtension</a> ]]></comment>
+                            <comment>
+                                <![CDATA[ For issues with the extension, create an issue in the github repository: <a href="https://github.com/TriggeredMessaging/digitalDataMagentoExtension/issues" target="_blank">TriggeredMessaging/digitalDataMagentoExtension</a> ]]></comment>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -149,7 +165,8 @@
                         <TriggeredMessaging_Info_Support_Script translate="label">
                             <label>Triggered Messaging Support</label>
                             <frontend_type>label</frontend_type>
-                            <comment><![CDATA[ For issues with the Triggered Messaging functionality, contact support: <a href="mailto:hello@triggeredmessaging.com?Subject=Magento%20Extension%20Support%20Request" target="_blank">hello@triggeredmessaging.com</a> ]]></comment>
+                            <comment>
+                                <![CDATA[ For issues with the Triggered Messaging functionality, contact support: <a href="mailto:hello@triggeredmessaging.com?Subject=Magento%20Extension%20Support%20Request" target="_blank">hello@triggeredmessaging.com</a> ]]></comment>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -158,7 +175,7 @@
                     </fields>
                     <expanded>1</expanded>
                 </TriggeredMessaging_Info_Support>
-                   
+
                 <TriggeredMessaging_Info_Testing translate="label">
                     <label>Testing</label>
                     <sort_order>2</sort_order>
@@ -169,7 +186,8 @@
                         <TriggeredMessaging_Info_Testing_Note translate="label">
                             <label>Testing</label>
                             <frontend_type>label</frontend_type>
-                            <comment><![CDATA[ You can test that your store is exposing the correct data by entering your URL at <a href="http://digitaldatavalidator.com/" target="_blank">digitalDataValidator.com</a> ]]></comment>
+                            <comment>
+                                <![CDATA[ You can test that your store is exposing the correct data by entering your URL at <a href="http://digitaldatavalidator.com/" target="_blank">digitalDataValidator.com</a> ]]></comment>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
