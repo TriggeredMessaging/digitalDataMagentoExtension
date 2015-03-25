@@ -1,5 +1,4 @@
 <?php
-
 class TriggeredMessaging_DigitalDataLayer_Model_Observer
 {
     /**
@@ -8,7 +7,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Observer
      * @var bool
      */
     protected $_isEnabled;
-
+    
     /**
      * Class constructor
      */
@@ -19,7 +18,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Observer
         } catch (Exception $e) {
         }
     }
-
+    
     /**
      * Check if full page cache is enabled
      *
@@ -29,7 +28,6 @@ class TriggeredMessaging_DigitalDataLayer_Model_Observer
     {
         return $this->_isEnabled;
     }
-
     /**
      * Set cart hash in cookie on quote change
      *

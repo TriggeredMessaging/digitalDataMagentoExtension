@@ -1,5 +1,4 @@
 <?php
-
 class TriggeredMessaging_DigitalDataLayer_Model_Container_Ddl extends Enterprise_PageCache_Model_Container_Advanced_Quote
 {
     /**
