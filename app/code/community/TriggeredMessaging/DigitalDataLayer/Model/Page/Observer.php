@@ -966,7 +966,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             if ($quote->getGrandTotal() && $quote->getGrandTotal() < 0) {
                 $cart['price']['cartTotal'] = (float)$quote->getGrandTotal();
             } else {
-                $cart['price']['cartTotal'] = $cart['price']['basePrice'];
+                $cart['price']['cartTotal'] = $cart['price']['priceWithTax'];
             }
             // $cart['attributes'] = array();
             if ($cart['price']['basePrice'] === 0.0 && $cart['price']['cartTotal'] === 0.0 && $cart['price']['priceWithTax'] === 0.0) {
