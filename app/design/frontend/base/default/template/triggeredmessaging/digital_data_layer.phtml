@@ -70,7 +70,7 @@ try {
 <?php endif; ?>
 
 <?php if ($triggered_messaging_script_enabled) :?>
-<!-- Triggered Messaging Script Start -->
+<!-- Fresh Relevance Script Start -->
 <?php if ($triggered_messaging_website_id) :?>
 <script defer="defer" async="async" src='//d81mfvml8p5ml.cloudfront.net/<?php echo $triggered_messaging_website_id; ?>.js'></script>
 <?php if ($mage->_isConfirmation()) :?>
@@ -79,10 +79,10 @@ try {
 <?php endif;?>
 <?php else: ?>
 <script type="text/javascript">
-console.log("You have enabled the Triggered Messaging script from the Magento Admin Configuration Panel, but have not supplied a website ID. Please go to http://www.triggeredmessaging.com/contact for support on this.");
+console.log("You have enabled the Fresh Relevance script from the Magento Admin Configuration Panel, but have not supplied a website ID. Please go to http://www.freshrelevance.com/contact for support on this.");
 </script>
 <?php endif;?>
-<!-- Triggered Messaging Script End -->
+<!-- Fresh Relevance Script End -->
 <?php endif;?>
 
 <?php } catch (Exception $e) {} ?>

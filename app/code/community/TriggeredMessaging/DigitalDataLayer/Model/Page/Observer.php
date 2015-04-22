@@ -525,6 +525,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             // Product Info
             $product_model['productInfo'] = array();
             $product_model['productInfo']['productID'] = $product->getId();
+            $product_model['productInfo']['sku'] = $product->getSku();
             $product_model['productInfo']['productName'] = $product->getName();
             $product_model['productInfo']['description'] = strip_tags($product->getShortDescription());
             $product_model['productInfo']['productURL'] = $product->getProductUrl();
@@ -960,12 +961,12 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             if ($quote->getShippingAddress()->getTaxAmount() && $quote->getBaseSubtotal()) {
                 $cart['price']['priceWithTax'] = (float)$quote->getShippingAddress()->getTaxAmount() + $this->getCurrentPrice($quote->getBaseSubtotal(), false, false);
             } else {
-                $cart['price']['priceWithTax'] = 0.0;
+                $cart['price']['priceWithTax'] = $cart['price']['basePrice'];
             }
             if ($quote->getGrandTotal() && $quote->getGrandTotal() < 0) {
                 $cart['price']['cartTotal'] = (float)$quote->getGrandTotal();
             } else {
-                $cart['price']['cartTotal'] = 0.0;
+                $cart['price']['cartTotal'] = $cart['price']['basePrice'];
             }
             // $cart['attributes'] = array();
             if ($cart['price']['basePrice'] === 0.0 && $cart['price']['cartTotal'] === 0.0 && $cart['price']['priceWithTax'] === 0.0) {

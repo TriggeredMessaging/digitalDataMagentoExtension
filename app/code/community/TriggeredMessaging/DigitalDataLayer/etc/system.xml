@@ -83,7 +83,7 @@
                 </TriggeredMessaging_DigitalDataLayer_Settings>
 
                 <TriggeredMessaging_Script_Settings translate="label">
-                    <label>Triggered Messaging Script Configuration (Optional)</label>
+                    <label>Fresh Relevance Script Configuration (Optional)</label>
                     <sort_order>2</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -94,7 +94,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>triggered_messaging/triggered_messaging_script_enabled</config_path>
-                            <comment><![CDATA[ <a href="http://www.triggeredmessaging.com/supported-ecommerce-platforms/magento?utm_campaign=magento_plugin&utm_medium=web&utm_source=magento" target="_blank">More information on Triggered Messaging and Magento</a>. ]]></comment>
+                            <comment><![CDATA[ <a href="http://www.freshrelevance.com/supported-ecommerce-platforms/magento?utm_campaign=magento_plugin&utm_medium=web&utm_source=magento" target="_blank">More information on Fresh Relevance and Magento</a>. ]]></comment>
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -105,7 +105,7 @@
                             <label>Website ID</label>
                             <frontend_type>text</frontend_type>
                             <config_path>triggered_messaging/triggered_messaging_website_id</config_path>
-                            <comment><![CDATA[ You can find your Website ID within your <a href="https://admin.triggeredmessaging.com/" target="_blank">Triggered Messaging admin area</a>. ]]>
+                            <comment><![CDATA[ You can find your Website ID within your <a href="https://admin.freshrelevance.com/" target="_blank">Fresh Relevance admin area</a>. ]]>
                             </comment>
                             <validate>validate-alphanum</validate>
                             <sort_order>2</sort_order>
@@ -147,9 +147,9 @@
                             <show_in_store>1</show_in_store>
                         </TriggeredMessaging_Info_Support_Extension>
                         <TriggeredMessaging_Info_Support_Script translate="label">
-                            <label>Triggered Messaging Support</label>
+                            <label>Fresh Relevance Support</label>
                             <frontend_type>label</frontend_type>
-                            <comment><![CDATA[ For issues with the Triggered Messaging functionality, contact support: <a href="mailto:hello@triggeredmessaging.com?Subject=Magento%20Extension%20Support%20Request" target="_blank">hello@triggeredmessaging.com</a> ]]></comment>
+                            <comment><![CDATA[ For issues with the Fresh Relevance functionality, contact support: <a href="mailto:hello@freshrelevance.com?Subject=Magento%20Extension%20Support%20Request" target="_blank">hello@freshrelevance.com</a> ]]></comment>
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
