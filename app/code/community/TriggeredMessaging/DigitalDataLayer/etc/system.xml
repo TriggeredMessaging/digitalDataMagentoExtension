@@ -78,6 +78,33 @@
                                 <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
                             </depends>
                         </TriggeredMessaging_DigitalDataLayer_Attributes_Enabled>
+						<TriggeredMessaging_DigitalDataLayer_Stock_Enabled translate="label">
+                            <label>Enable Stock Exposure</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>TriggeredMessaging_DigitalDataLayer_Model_System_Config_Source_Stockexposure</source_model>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_stock_exposure</config_path>
+                            <comment><![CDATA[ Optionally expose stock level in the Dgitial Data Layer. ]]></comment>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                            </depends>
+                        </TriggeredMessaging_DigitalDataLayer_Stock_Enabled>
+						<TriggeredMessaging_DigitalDataLayer_Prod_List_Enabled translate="label">
+                            <label>Limit Products Exposed On Product List</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_prod_list_exposure</config_path>
+                            <comment><![CDATA[ Set an optional limit for products exposed on a product list page. Leave blank to expose all products on a product list, or set to 0 to disable Product exposure on list pages. ]]></comment>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                            </depends>
+                        </TriggeredMessaging_DigitalDataLayer_Prod_List_Enabled>
                     </fields>
                     <expanded>1</expanded>
                 </TriggeredMessaging_DigitalDataLayer_Settings>

@@ -194,7 +194,16 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             return floatval(number_format(Mage::helper('core')->currency((float)$_price, $p1, $p2), 2, '.', ''));
         }
     }
-
+	
+	/*
+     * Get information on pages to pass to front end
+     */
+    public function getProductPrice($_product, $_price, $IncTax)
+    {
+		$tax_helper = Mage::helper('tax');
+        return round(Mage::helper('core')->currency($tax_helper->getPrice($_product,$_price, $IncTax),false,false),2);
+    }
+	
     public function getVersion()
     {
         return $this->_version;
@@ -529,6 +538,16 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             $product_model['productInfo']['productName'] = $product->getName();
             $product_model['productInfo']['description'] = strip_tags($product->getShortDescription());
             $product_model['productInfo']['productURL'] = $product->getProductUrl();
+			$stock = $this->_getProductStock($product);
+			if($this->_stockExp==2){
+				$product_model['productInfo']['stock'] = $stock;
+			} else if($this->_stockExp==1){
+				if($stock>0){
+					$product_model['productInfo']['stock'] = 'In Stock';
+				} else {
+					$product_model['productInfo']['stock'] = 'Out of Stock';
+				}
+			}
 
             //Check if images contain placeholders
             if ($product->getImage() && $product->getImage() !== "no_selection") {
@@ -544,7 +563,6 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             try {
                 $attributes = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY)->getAttributeCollection();
                 foreach ($attributes as $attr) {
-                    $infoLocation = 'none';
                     $attrCode = $attr->getAttributecode();
                     if ($attrCode === 'color' || $attrCode === 'manufacturer' || $attrCode === 'size') {
                         if ($product->getAttributeText($attrCode) && in_array($attrCode, $this->_expAttr)) {
@@ -600,14 +618,16 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
 
             // Price
             $product_model['price'] = array();
-            if (!$product->getSpecialPrice() || $product->getSpecialPrice() !== $product->getFinalPrice()) {
-                $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getPrice()), false, false);
+            if (!$this->getProductPrice($product,$product->getSpecialPrice(),false) || $this->getProductPrice($product,$product->getSpecialPrice(),false) !== $this->getProductPrice($product,$product->getFinalPrice(),false)) {
+                $product_model['price']['basePrice'] = $this->getProductPrice($product,$product->getPrice(),false);
+				$product_model['price']['priceWithTax'] = $this->getProductPrice($product,$product->getPrice(),true);
             } else {
-                $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getSpecialPrice()), false, false);
-                $product_model['price']['regularPrice'] = $this->getCurrentPrice(floatval($product->getPrice()), false, false);
+                $product_model['price']['basePrice'] = $this->getProductPrice($product,$product->getSpecialPrice(),false);
+				$product_model['price']['priceWithTax'] = $this->getProductPrice($product,$product->getSpecialPrice(),true);
+                $product_model['price']['regularPrice'] = $this->getProductPrice($product,$product->getPrice(),false);
+				$product_model['price']['regularPriceWithTax'] = $this->getProductPrice($product,$product->getPrice(),true);
             }
             $product_model['price']['currency'] = $this->_getCurrency();
-            $product_model['price']['priceWithTax'] = $this->getCurrentPrice(floatval($product->getFinalPrice()), false, false);
 
             if (!$product_model['price']['priceWithTax']) {
                 unset($product_model['price']['priceWithTax']);
@@ -615,13 +635,13 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
 
             // In case 'basePrice' did not exist
             if (!$product_model['price']['basePrice']) {
-                $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getGroupPrice()), false, false);
+                $product_model['price']['basePrice'] = $this->getProductPrice($product,$product->getGroupPrice(), false);
             }
             if (!$product_model['price']['basePrice']) {
-                $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getMinimalPrice()), false, false);
+                $product_model['price']['basePrice'] = $this->getProductPrice($product,$product->getMinimalPrice(), false);
             }
             if (!$product_model['price']['basePrice']) {
-                $product_model['price']['basePrice'] = $this->getCurrentPrice(floatval($product->getSpecialPrice()), false, false);
+                $product_model['price']['basePrice'] = $this->getProductPrice($product,$product->getSpecialPrice(), false);
             }
             if (!$product_model['price']['basePrice']) {
                 // Extract price for bundle products
@@ -635,7 +655,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                         }
                         $_selection = $_option->getDefaultSelection();
                         if ($_selection === null) continue;
-                        $normal_price += $this->getCurrentPrice(floatval($_selection->getPrice()), false, false);
+                        $normal_price += $this->getProductPrice($product,$_selection->getPrice(), false);
                     }
                     $product_model['price']['basePrice'] = $normal_price;
                 }
@@ -643,17 +663,17 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
 
             if ($this->_debug) {
                 $product_model['price']['all'] = array();
-                $product_model['price']['all']['getPrice'] = $this->getCurrentPrice($product->getPrice(), false, false);
-                $product_model['price']['all']['getMinimalPrice'] = $this->getCurrentPrice($product->getMinimalPrice(), false, false);
+                $product_model['price']['all']['getPrice'] = $this->getProductPrice($product,$product->getPrice(), false);
+                $product_model['price']['all']['getMinimalPrice'] = $this->getProductPrice($product,$product->getMinimalPrice(), false);
                 $product_model['price']['all']['getPriceModel'] = $product->getPriceModel();
-                $product_model['price']['all']['getGroupPrice'] = $this->getCurrentPrice($product->getGroupPrice(), false, false);
+                $product_model['price']['all']['getGroupPrice'] = $this->getProductPrice($product,$product->getGroupPrice(), false);
                 $product_model['price']['all']['getTierPrice'] = $product->getTierPrice();
                 $product_model['price']['all']['getTierPriceCount'] = $product->getTierPriceCount();
                 $product_model['price']['all']['getFormatedTierPrice'] = $product->getFormatedTierPrice();
                 $product_model['price']['all']['getFormatedPrice'] = $product->getFormatedPrice();
-                $product_model['price']['all']['getFinalPrice'] = $this->getCurrentPrice($product->getFinalPrice(), false, false);
+                $product_model['price']['all']['getFinalPrice'] = $this->getProductPrice($product,$product->getFinalPrice(), false);
                 $product_model['price']['all']['getCalculatedFinalPrice'] = $product->getCalculatedFinalPrice();
-                $product_model['price']['all']['getSpecialPrice'] = $this->getCurrentPrice($product->getSpecialPrice(), false, false);
+                $product_model['price']['all']['getSpecialPrice'] = $this->getProductPrice($product,$product->getSpecialPrice(), false);
             }
 
             // Calculate Tax Rate
@@ -726,13 +746,6 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 $product_model['more']['getThumbnail'] = $product->getThumbnail();
                 $product_model['more']['getThumbnailURL'] = $product->getThumbnailUrl();
             }
-
-            // Other
-            // $product_model['attributes'] = array();
-
-            // The following are not used in W3C DDL but exist in Universal Variable:
-            // $product_model['sku_code'] = $product->getSku();
-            // $product_model['stock']           = (int) $this->_getProductStock($product);
         } catch (Exception $e) {
         }
 
@@ -799,14 +812,13 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 $product = $this->_getProduct($productId);
 
                 $parentIds = Mage::getModel('catalog/product_type_grouped')->getParentIdsByChild($productId);
-                if (count($parentIds) > 0) {
+                if (!empty($parentIds)) {
                     $litem_model = $this->_getProductModel($product, 'linked');
                     $litem_model['linkedProduct'] = array();
                     array_push($litem_model['linkedProduct'], $this->_getProductModel($this->_getProduct($parentIds[0]), 'linked'));
                 } else {
                     $litem_model = $this->_getProductModel($item, 'cart');
                 }
-
                 if ($page_type === 'cart') {
                     $litem_model['quantity'] = floatval($item->getQty());
                 } else {
@@ -824,8 +836,8 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 }
                 // $litem_model['price']['shipping'];
                 // $litem_model['price']['shippingMethod'] = $this->_extractShippingMethod($item->getQuote());
-                $litem_model['price']['priceWithTax'] = $this->getCurrentPrice(floatval($item->getBasePriceInclTax()), false, false); // TODO: This may be different from that in _getProductModel()
-                $litem_model['price']['cartTotal'] = floatval($item->getRowTotalInclTax());
+                //$litem_model['price']['priceWithTax'] = $this->getCurrentPrice(floatval($item->getBasePriceInclTax()), false, false); No longer needed with better tax calculation
+                $litem_model['price']['cartTotal'] = floatval($item->getRowTotalInclTax()); //cart Total still useful for products that might have add-ons etc.
 
                 if ($this->_debug) {
                     $litem_model['price']['all']['_getCalculationPrice'] = $this->getCurrentPrice($product->getCalculationPrice(), false, false);
@@ -1149,7 +1161,9 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 $this->_debug = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled');
                 $this->_userGroupExp = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled');
                 $this->_expAttr = explode(',', Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled'));
-
+				$this->_stockExp = (int)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_stock_exposure');
+				$this->_listLimit = Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_prod_list_exposure');
+				
                 $this->_setUser();
                 $this->_setPage();
 
