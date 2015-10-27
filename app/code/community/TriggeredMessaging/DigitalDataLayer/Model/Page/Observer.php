@@ -948,6 +948,9 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 $cart['cartID'] = (string)$cart_id;
             }
             $cart['price'] = array();
+	    if($quote-getSubtotal()){
+		$cart['price']['basePrice'] = $quote-getSubtotal();  
+	    }
             if ($quote->getBaseSubtotal()) {
                 $cart['price']['basePrice'] = $this->getCurrentPrice(floatval($quote->getBaseSubtotal()), false, false);
             } else {
@@ -961,7 +964,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             }
             $cart['price']['currency'] = $this->_getCurrency();
             if ($cart['price']['basePrice'] > 0.0) {
-                $taxRate = (float)$quote->getShippingAddress()->getTaxAmount() / $cart['price']['basePrice'];
+                $taxRate = (float)$quote->getShippingAddress()->getTaxAmount() / $quote->getSubtotal();
                 $cart['price']['taxRate'] = round($taxRate, 3); // TODO: Find a better way
             }
             if ($quote->getShippingAmount()) {
@@ -970,13 +973,13 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             if ($this->_extractShippingMethod($quote)) {
                 $cart['price']['shippingMethod'] = $this->_extractShippingMethod($quote);
             }
-            if ($quote->getShippingAddress()->getTaxAmount() && $quote->getBaseSubtotal()) {
-                $cart['price']['priceWithTax'] = (float)$quote->getShippingAddress()->getTaxAmount() + $this->getCurrentPrice($quote->getBaseSubtotal(), false, false);
+            if ($quote->getShippingAddress()->getTaxAmount() && $quote->getSubtotal()) {
+                $cart['price']['priceWithTax'] = (float)$quote->getShippingAddress()->getTaxAmount() + $this->getCurrentPrice($quote->getSubtotal(), false, false);
             } else {
                 $cart['price']['priceWithTax'] = $cart['price']['basePrice'];
             }
-            if ($quote->getGrandTotal() && $quote->getGrandTotal() < 0) {
-                $cart['price']['cartTotal'] = (float)$quote->getGrandTotal();
+            if ($quote->getData()['grand_total'] ) {
+                $cart['price']['cartTotal'] = (float)$quote->getData()['grand_total'];
             } else {
                 $cart['price']['cartTotal'] = $cart['price']['priceWithTax'];
             }

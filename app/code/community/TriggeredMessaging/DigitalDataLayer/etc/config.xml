@@ -2,7 +2,7 @@
 <config>
   <modules>
     <TriggeredMessaging_DigitalDataLayer>
-      <version>0.3.11</version>
+      <version>0.3.12</version>
     </TriggeredMessaging_DigitalDataLayer>
   </modules>
 
