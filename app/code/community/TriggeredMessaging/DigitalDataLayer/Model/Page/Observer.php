@@ -948,8 +948,8 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 $cart['cartID'] = (string)$cart_id;
             }
             $cart['price'] = array();
-	    if($quote-getSubtotal()){
-		$cart['price']['basePrice'] = $quote-getSubtotal();  
+	    if ($quote->getSubtotal()) {
+		$cart['price']['basePrice'] = $quote->getSubtotal();
 	    }
             if ($quote->getBaseSubtotal()) {
                 $cart['price']['basePrice'] = $this->getCurrentPrice(floatval($quote->getBaseSubtotal()), false, false);
@@ -978,8 +978,8 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             } else {
                 $cart['price']['priceWithTax'] = $cart['price']['basePrice'];
             }
-            if ($quote->getData()['grand_total'] ) {
-                $cart['price']['cartTotal'] = (float)$quote->getData()['grand_total'];
+            if ($quote->getGetData()['grand_total']) {
+                $cart['price']['cartTotal'] = (float)$quote->getGetData()['grand_total'];
             } else {
                 $cart['price']['cartTotal'] = $cart['price']['priceWithTax'];
             }

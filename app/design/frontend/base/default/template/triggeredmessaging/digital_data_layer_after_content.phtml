@@ -34,7 +34,18 @@
         // Grab product list data (from category and search pages)
         $that = Mage::getBlockSingleton('catalog/product_list');
         if (!$that) return;
-        $_productCollection = $that->getLoadedProductCollection();
+	// Check to see if we are on the advanced search page
+	if ($this->getRequest()->getControllerName()=='advanced') {
+		// If we are on the advanced search index page, don't build item collection				
+		if(strrpos(Mage::app()->getRequest()->getActionName(), 'result') === false){
+			return;
+		}
+		// If were not on the index, assume we are on the result page, build collection from results
+		$_productCollection = Mage::getSingleton('catalogsearch/advanced')->getProductCollection();    
+	} else {
+		// If were not on the advanced search page, get loaded products
+		$_productCollection = $that->getLoadedProductCollection();
+	}
         if (!$_productCollection) return;
         if ($_productCollection->count() === 0) return;
 
