@@ -35,13 +35,57 @@
                             <show_in_store>1</show_in_store>
                         </TriggeredMessaging_DigitalDataLayer_Enabled>
 
+                        <TriggeredMessaging_DigitalDataLayer_All_Pages translate="label">
+                            <label>Fetch to all pages</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_all_pages</config_path>
+                            <comment><![CDATA[ The Digital Data Layer object will be fetched to every page on the website ]]></comment>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                            </depends>
+                        </TriggeredMessaging_DigitalDataLayer_All_Pages>
+
+                        <TriggeredMessaging_DigitalDataLayer_Pages_Selection translate="label">
+                            <label>Pages selection</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>digital_data_layer_main/system_config_source_pages</source_model>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_pages_selection</config_path>
+                            <comment><![CDATA[ Choose which pages to expose the DDL object on]]></comment>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <TriggeredMessaging_DigitalDataLayer_All_Pages>0</TriggeredMessaging_DigitalDataLayer_All_Pages>
+                            </depends>
+                        </TriggeredMessaging_DigitalDataLayer_Pages_Selection>
+
+                        <TriggeredMessaging_DigitalDataLayer_Pages_Extra translate="label">
+                            <label>Pages extra - custom list of page handles</label>
+                            <frontend_type>textarea</frontend_type>
+                            <config_path>triggered_messaging/triggered_messaging_digital_data_layer_pages_extra</config_path>
+                            <comment><![CDATA[ You can add extra list of page LAYOUT HANDLES if the desired page is missing in the Pages selection above. One layout handle per each line.]]></comment>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <TriggeredMessaging_DigitalDataLayer_All_Pages>0</TriggeredMessaging_DigitalDataLayer_All_Pages>
+                            </depends>
+                        </TriggeredMessaging_DigitalDataLayer_Pages_Extra>
+
                         <TriggeredMessaging_DigitalDataLayer_DebugEnabled translate="label">
                             <label>Enable Debug Mode</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled</config_path>    
                             <comment><![CDATA[ Outputs more data about the page to the digitalData layer, for debugging purposes. Should be disabled for production use. ]]></comment>
-                            <sort_order>2</sort_order>
+                            <sort_order>12</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -56,7 +100,7 @@
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled</config_path>
                             <comment><![CDATA[ This will expose the user group that any logged in user is a part of. Disable if you require this to be kept private. ]]></comment>
-                            <sort_order>3</sort_order>
+                            <sort_order>13</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -70,7 +114,7 @@
                             <source_model>TriggeredMessaging_DigitalDataLayer_Model_System_Config_Source_Productattributes</source_model>
                             <config_path>triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled</config_path>
                             <comment><![CDATA[ Select the custom product attributes that you would like to expose. NOTE: You must use Shift or Ctrl to select multiple attributes. ]]></comment>
-                            <sort_order>4</sort_order>
+                            <sort_order>14</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -84,7 +128,7 @@
                             <source_model>TriggeredMessaging_DigitalDataLayer_Model_System_Config_Source_Stockexposure</source_model>
                             <config_path>triggered_messaging/triggered_messaging_digital_data_layer_stock_exposure</config_path>
                             <comment><![CDATA[ Optionally expose stock level in the Dgitial Data Layer. ]]></comment>
-                            <sort_order>5</sort_order>
+                            <sort_order>15</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -97,7 +141,7 @@
                             <frontend_type>text</frontend_type>
                             <config_path>triggered_messaging/triggered_messaging_digital_data_layer_prod_list_exposure</config_path>
                             <comment><![CDATA[ Set an optional limit for products exposed on a product list page. Leave blank to expose all products on a product list, or set to 0 to disable Product exposure on list pages. ]]></comment>
-                            <sort_order>6</sort_order>
+                            <sort_order>16</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -105,6 +149,21 @@
                                 <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
                             </depends>
                         </TriggeredMessaging_DigitalDataLayer_Prod_List_Enabled>
+                        <TriggeredMessaging_DigitalDataLayer_FullProductReload translate="label">
+                            <label>Enable the full product reload for category listing</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>triggered_messaging/triggered_messaging_enable_product_reload_on_category_listing</config_path>
+                            <comment><![CDATA[ Will slow the response time. Only allow if anything is missing in the output. ]]></comment>
+                            <sort_order>18</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <TriggeredMessaging_DigitalDataLayer_Enabled>1</TriggeredMessaging_DigitalDataLayer_Enabled>
+                            </depends>
+                        </TriggeredMessaging_DigitalDataLayer_FullProductReload>
+
                     </fields>
                     <expanded>1</expanded>
                 </TriggeredMessaging_DigitalDataLayer_Settings>
