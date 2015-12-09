@@ -264,6 +264,99 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
     }
 
 
+    public function getCategoryListingCollection()
+    {
+        $limit = Mage::helper('digital_data_layer_main')->getConfigProductListLimit();
+        if( 0 === $limit ){
+            return null;
+        }
+
+        // original code - getting the collection form the block instance - deprecated function
+        // Grab product list data (from category and search pages)
+        //$listingCollection = Mage::getBlockSingleton('catalog/product_list')->getLoadedProductCollection();
+
+
+        // new code - building custom collections
+        $currentCategory = Mage::registry('current_category');
+        // CATEGORY PAGE
+        if($currentCategory ){
+            $collection = $currentCategory->getProductCollection();
+
+        // QUICK SEARCH PAGE
+        } elseif($this->_isSearch() && Mage::helper('catalogsearch')->getQueryText()) {
+
+            $searchText = Mage::helper('catalogsearch')->getQueryText();
+            $query = Mage::getModel('catalogsearch/query')->setQueryText($searchText)->prepare();
+            $fulltextResource = Mage::getResourceModel('catalogsearch/fulltext')->prepareResult(
+                Mage::getModel('catalogsearch/fulltext'),
+                $searchText,
+                $query
+            );
+
+            $collection = Mage::getResourceModel('catalog/product_collection');
+            $collection->getSelect()->joinInner(
+                array('search_result' => $collection->getTable('catalogsearch/result')),
+                $collection->getConnection()->quoteInto(
+                    'search_result.product_id=e.entity_id AND search_result.query_id=?',
+                    $query->getId()
+                ),
+                array('relevance' => 'relevance')
+            );
+
+        // ADVANCED SEARCH collection - already loaded, need to clone/clear it first
+        } elseif($this->_isSearch() && Mage::getSingleton('catalogsearch/advanced')->getProductCollection()->getSize()) {
+            $collection = clone Mage::getSingleton('catalogsearch/advanced')->getProductCollection();
+            $collection->clear();
+
+        // EXIT if none of the above
+        } else {
+
+                return null;
+        }
+
+
+        // add extra features/filters to collection
+        $collection
+            ->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes()) // Product Listing attributes
+            // ->addAttributeToSelect('*') // add all attributes - optional
+            ->addAttributeToFilter('status', 1) // enabled only
+            ->addAttributeToSelect('image') // main image
+            // ->addAttributeToFilter('visibility', 4) //visibility in catalog,search
+            ->setVisibility(Mage::getSingleton('catalog/product_visibility')->getVisibleInCatalogIds())
+            ->addStoreFilter()
+            ->addMinimalPrice()
+            ->addFinalPrice()
+            ->addTaxPercents()
+            // ->setOrder('price', 'ASC') //sets the order by price
+        ;
+        if($currentCategory){
+            $collection->addUrlRewrite($currentCategory->getId());
+        }
+        // add stock filter
+        Mage::getSingleton('cataloginventory/stock')->addInStockFilterToCollection($collection);
+        // add limits
+        if( -1 !== $limit ){
+            $collection->setPageSize($limit)->setCurPage(1);
+        }
+
+        return $collection;
+    }
+
+    public function getCategoryProductsToShow()
+    {
+        $output = array();
+        if($productListing = $this->getCategoryListingCollection()){
+            foreach($productListing as $item){
+                $output[] = $this->_getProductModel($item, 'list');
+            }
+        }
+
+        return $output;
+    }
+
+
+
+
     /*
      * Set the model attributes to be passed front end
      */
@@ -527,8 +620,11 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             $product = $this->_getProduct($productId);
         }
         if ($_page_ === 'list') {
-            $productId = $product->getId();
-            $product = $this->_getProduct($productId);
+            // optimisation - do not re-load the whole product, fetch all needed attributes into the category collection
+            if (Mage::helper('digital_data_layer_main')->shouldReloadProductOnCategoryListing()){
+                $productId = $product->getId();
+                $product = $this->_getProduct($productId);
+            }
         }
         try {
             // Product Info
@@ -948,7 +1044,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
                 $cart['cartID'] = (string)$cart_id;
             }
             $cart['price'] = array();
-	    if ($quote->getSubtotal()) {
+	    if($quote->getSubtotal()){
 		$cart['price']['basePrice'] = $quote->getSubtotal();
 	    }
             if ($quote->getBaseSubtotal()) {
@@ -978,8 +1074,8 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             } else {
                 $cart['price']['priceWithTax'] = $cart['price']['basePrice'];
             }
-            if ($quote->getGetData()['grand_total']) {
-                $cart['price']['cartTotal'] = (float)$quote->getGetData()['grand_total'];
+            if ($quote->getData()['grand_total'] ) {
+                $cart['price']['cartTotal'] = (float)$quote->getData()['grand_total'];
             } else {
                 $cart['price']['cartTotal'] = $cart['price']['priceWithTax'];
             }
@@ -1157,10 +1253,26 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
         //  - privacyAccessCategories
         //  - version = "1.0"
 
+
         try {
             $triggered_messaging_digital_data_layer_enabled = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_enabled');
-
             if ($triggered_messaging_digital_data_layer_enabled == 1) {
+
+                // get layout handles
+                $handles = Mage::app()->getLayout()->getUpdate()->getHandles();
+
+                // allow DDL rendering for all pages or just specified handles
+                if (! Mage::helper('digital_data_layer_main')->isAllPagesEnabled()){
+                    $allowedPageHandles = Mage::helper('digital_data_layer_main')->getAllowedPagesHandlers();
+
+                    // if the handle match is NOT found
+                    if(! count(array_intersect($allowedPageHandles, $handles)) ){
+                        //Zend_Debug::dump('NO MATCH - returning false');
+                        return false;
+                    }
+
+                }
+
                 $this->_debug = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_debug_enabled');
                 $this->_userGroupExp = (boolean)Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_user_group_enabled');
                 $this->_expAttr = explode(',', Mage::getStoreConfig('triggered_messaging/triggered_messaging_digital_data_layer_attributes_enabled'));
