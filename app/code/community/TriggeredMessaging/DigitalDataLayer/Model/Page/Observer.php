@@ -211,13 +211,12 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
 
     public function getPurchaseCompleteQs()
     {
-
         $orderId = $this->_getCheckoutSession()->getLastOrderId();
         if ($orderId) {
             $order = $this->_getSalesOrder()->load($orderId);
             $email = $order->getCustomerEmail();
         } else {
-            $email = $user->getEmail();
+            $email = $this->_getCustomer()->getEmail();
         }
         $qs = "e=" . urlencode($email);
 
