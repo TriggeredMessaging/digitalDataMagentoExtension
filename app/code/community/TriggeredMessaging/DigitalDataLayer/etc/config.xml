@@ -2,7 +2,7 @@
 <config>
   <modules>
     <TriggeredMessaging_DigitalDataLayer>
-      <version>0.3.12</version>
+      <version>0.4.0</version>
     </TriggeredMessaging_DigitalDataLayer>
   </modules>
 
@@ -65,7 +65,6 @@
 	  <triggered_messaging_digital_data_layer_prod_list_exposure></triggered_messaging_digital_data_layer_prod_list_exposure>
       <triggered_messaging_script_enabled>1</triggered_messaging_script_enabled>
       <triggered_messaging_website_id></triggered_messaging_website_id>
-      <triggered_messaging_digital_data_layer_prod_list_exposure>0</triggered_messaging_digital_data_layer_prod_list_exposure>
     </triggered_messaging>
   </default>
 </config>
