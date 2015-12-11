@@ -217,7 +217,7 @@ class TriggeredMessaging_DigitalDataLayer_Model_Page_Observer
             $order = $this->_getSalesOrder()->load($orderId);
             $email = $order->getCustomerEmail();
         } else {
-            $email = $user->getEmail();
+            $email = $this->_getCustomer()->getEmail();
         }
         $qs = "e=" . urlencode($email);
 
